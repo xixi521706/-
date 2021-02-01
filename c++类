@@ -1,0 +1,28 @@
+//c++学习
+//类
+#include <iostream>
+
+class Stu{
+public:
+    Stu(string na){
+        name=na;
+        len=strlen(na.c_str());
+    }
+    string c_str()
+    {
+        return name;
+    }
+    void dis()
+    {
+        cout<<len<<endl;
+    }   
+private:
+    int len;
+    string name;
+}
+int main()
+{
+    Stu s("china");        //类->对象->初始化
+    s.dis();               //类成员函数调用.
+    return 0;
+}
