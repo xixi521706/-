@@ -1,0 +1,61 @@
+//mylist.h
+#include <iostream>
+#include <stdio.h>
+#pragma once
+
+struct node{
+	char a;
+	struct node* next;
+};
+
+class list{
+public:
+	list();
+	~list();
+	void insert(char a);
+	void traverselist();
+private:
+	node* head;
+};
+
+//mylist.cpp
+#include "mylist.h"
+using namespace std;
+
+list::list(){
+	head = new node;
+	head->next = NULL;
+}
+list::~list(){
+	node*t=head;
+	while (head)	{
+		head = head->next;
+		delete t;
+		t = head;
+	}
+}
+void list::insert(char a){
+	node* cur = new node;
+	cur->next = head->next;
+	cur->a = a;
+	head->next = cur;
+}
+void list::traverselist(){
+	node* nex = head->next;
+	while (nex){
+		cout << nex->a << endl;
+		nex = nex->next;
+	}
+}
+
+
+//main.cpp
+#include "mylist.h"
+int main(){
+	list l;
+	l.insert('a');
+	l.insert('b');
+	l.insert('c');
+	l.traverselist();
+	return 0;
+}
