@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <iostream>
+using namespace std;
+
+struct node{
+    int data;
+    struct node* next;
+};
+
+class listnode{
+public:
+    listnode() {
+         head=new struct node;
+    }
+    ~listnode(){
+    delete head;
+    }
+private:
+    int data;
+    struct node* head;
+};
+
+struct node* circlelist(listnode & l){     //快慢指针相遇在环中节点离入口距离d，还有c的距离走到入口，快指针走过的节点距离入口节点到头节点距离a时慢指针的2倍，a+d+c+d=2*(a+d),即c=a
+    if(l == null || l.next ==null)
+        return null;
+    struct node* fast=l.head,*slow =l.head;   
+    while(fast != null && fast.next != null)
+    {
+        fast=fast.next.next;
+        slow=slow.next;
+        if(fast == slow)
+        {
+             fast=head;
+             while(fast != slow)       //此时快指针到入口节点与head到入口节点距离是一样的，两个同时一个节点一个节点遍历，最终会在入口节点处相遇
+             {
+                 fast=fast.next;
+                 slow=slow.next;
+             }
+             return fast;
+        }
+    return null;
+}
+
+int main(){
+    listnode l;
+    cout<<circlelist(l)<<endl;
+    return 0;
+}
