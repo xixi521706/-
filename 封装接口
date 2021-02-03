@@ -1,0 +1,53 @@
+#include<iostream>
+#include <iomanip.h>
+#include <time.h>
+#include <windows.h>
+using namespace std;
+
+class clock{
+public:
+     clock(){
+          time_t t;
+          struct tm * lt;    time (&t);//获取Unix时间戳。   
+          lt = localtime (&t);//转为时间结构。 
+          hour=lt->tm_hour;
+          min=lt->tm_min;
+          sec=lt->tm_sec;
+     }
+     void runtime(){
+          while(1){
+              show()
+              run()
+          }
+     }
+private:
+     void show(){
+          system("cls");
+          cout<<setw(2)<<setfill('0')<<hour<<":";
+          cout<<setw(2)<<setfill('0')<<min<<":";
+          cout<<setw(2)<<setfill('0')<<sec<<endl;        
+     }
+     void run(){
+          Sleep(1);
+          sec++;
+          if(sec==60){
+               sec=0;
+               min++;
+               if(min==60){
+               min=0;
+               hour++;
+               if(hour==24)
+               hour=0;
+               }
+          }
+     }
+     int hour;
+     int min;
+     int sec;
+};
+int main()
+{
+     clock cl;
+     cl.runtime();
+     return 0;
+}
