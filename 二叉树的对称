@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <iostream>
+using namespace std;
+
+struct treenode{
+	int val;
+	treenode* _left;
+	treenode* _right;
+};
+class solution
+{
+public:
+	bool check(treenode* left, treenode* right)
+	{
+		if (left == NULL && right == NULL)
+			return true;
+		if (left == NULL || right == NULL)
+			return false;
+		return left->val == right->val && check(left->_left, right->_right) && check(left->_right, right->_left);
+	}
+	bool is_mirrortreenode(treenode *root)
+	{
+		if (root == NULL)
+			return true;
+		return check(root->_left, root->_right);
+	}
+}
