@@ -1,0 +1,34 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class Myfstream{
+public:
+	Myfstream(char* fn, char* mod)
+	{
+		fp = fopen(fn, mod);
+	}
+	char get(){
+		return fgetc(fp);
+	}
+	void put(char a){
+		fputc(a, fp);
+	}
+	void seekg(int offset, int where)
+	{
+		fseek(fp, offset, where);
+	}
+private:
+	FILE* fp;
+};
+
+int main()
+{
+	Myfstream ms("abc.txt", "w+");
+	ms.put('k');
+	ms.seekg(0, SEEK_SET);
+	cout << ms.get() << endl;
+	return 0;
+}
