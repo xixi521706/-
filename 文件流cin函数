@@ -1,0 +1,22 @@
+#include <iostream>
+using namespace std;
+
+int main()           //cin是键盘标准输入流函数，‘i'为截止符
+{
+    char buf[1024];
+    cin.get(buf,10,'i');    //从键盘输入流中，get10个字符放入buf中，遇到字符‘i’停止输入
+    cout<<buf<<endl;
+    memset（buf,0,1024);i'
+    cin.ignore(1);         //get函数会生成一个当前get指针,如后面再次get时会从当前位置开始读入buf，ignore会在下次get时跳过一个
+    cin.get(buf,10,'i');   //如果再次输入字符数和之前缓存数不够10-1（缓存\n会计入)，会继续等待（阻塞状态）,第10个数会放\0
+    cout<<buf<<endl;
+    return 0;
+}
+
+int main2()
+{
+    char buf;
+    cin.getline(buf,10);
+    cin.getline(buf,10,'i');  //如果遇到i,下次读入时会跳过i，其他则和get函数相同
+    return 0;
+}
