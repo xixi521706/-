@@ -1,0 +1,44 @@
+#include <iostream>
+#include <set>
+using namespace std;
+
+class MyPrint
+{
+public:
+	void operator()(int num){   //一元仿函数
+		cout << "num " << num << endl;
+		count++;         //3.记录状态，（仿函数调用次数）
+	}
+	int count = 0;
+};
+class Mycompare
+{
+public:
+	bool operator()(int a,int b){     //2.二元仿函数可作为set排序规则的数据类型
+		return a > b;
+	}
+};
+
+void test(){
+	MyPrint myprint;
+	myprint(111);        //1.功能看起来像函数调用，此时类为函数对象，是数据类型，重载了（）
+	myprint(111);
+	myprint(111);
+	myprint(111);
+	cout << myprint.count << endl;
+
+}
+
+void doprint(MyPrint print, int num){
+	print(num);
+	cout << print.count << endl;
+}
+int main(){
+//	test();
+
+//	doprint(MyPrint(), 100);      //此处的参数1生成了匿名对象，生命周期短
+
+	set<int, Mycompare>se;        //4.作为类型，与模板进行配合时，通用性好
+
+	return 0;
+}
