@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <string>
+
+using namespace std;
+
+class Myprint :public binary_function<int,int,void>              //继承二元binary_function<int,int,void>.萃取机，类型萃取.void为函数返回值
+{
+public:
+	void operator()(int v,int num) const{                        //const修饰不可修改
+		cout << v+num << endl;
+	}
+};
+class greaterthen:public unary_function<int,bool>{              //一元适配器
+public:
+	bool operator()(int val)const {
+		return val > 5;
+	}
+};
+void test(){
+//	greater<int>g;
+	vector<int> vec;
+	for (int i = 0; i < 10; i++){
+		vec.push_back(i);
+	}
+//	int num;
+	cout << "输入整数：";
+//	cin >> num;
+//	sort(vec.begin(), vec.end(), greater<int>());
+
+//	for_each(vec.begin(), vec.end(), [](int val){cout << val << endl; });
+//	for_each(vec.begin(), vec.end(), bind2nd(Myprint(),num));    //1.二元bind2nd函数对象适配器，拓展参数
+//	for_each(vec.begin(), vec.end(), bind1st(Myprint(),num));    //bind1st
+
+//	vector<int>::iterator pos=find_if(vec.begin(), vec.end(), not1(greaterthen()));   //not1一元适配器
+	vector<int>::iterator pos = find_if(vec.begin(), vec.end(), not1(bind2nd(greater<int>(), 5)));
+	cout << *pos << endl;
+}
+void MyPrint(int val,int num){
+	cout << val+num << endl;
+}
+void test01(){
+	vector<int> vec;
+	for (int i = 0; i < 10; i++){
+		vec.push_back(i);
+	}
+	for_each(vec.begin(), vec.end(),bind2nd(ptr_fun(MyPrint),100));   //普通函数指针适配成函数对象，bind
+}
+class Person{
+public:
+	Person(string name, int age){
+		_name = name;
+		_age = age;
+	}
+	void show(){
+		cout << this->_name << " " << this->_age << endl;
+	}
+	string _name;
+	int _age;
+};
+void Print(Person & p){
+	cout << p._name << " " << p._age << endl;
+}
+void test02(){
+	vector < Person > vec;
+	Person p1("zhangsan", 15);
+	Person p2("zaoshi", 25);
+	Person p3("lisi", 19);
+	Person p4("wangwu", 42);
+	vec.push_back(p1);
+	vec.push_back(p2);
+	vec.push_back(p3);
+	vec.push_back(p4);
+	for_each(vec.begin(), vec.end(), mem_fun_ref(&Person::show));
+}
+int main(){
+//	test();
+
+//	test01();
+
+	test02();
+	return 0;
+}
