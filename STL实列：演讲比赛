@@ -1,0 +1,104 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+#include <algorithm>
+#include <deque>
+#include <numeric>
+#include <functional>
+#include <ctime>
+
+using namespace std;
+
+/*
+	需求分析：
+	24人参加演讲，分三轮比赛。前两轮为淘汰赛。比赛每六人为一组，取前三名进入下一轮，直至决赛取出前三名。
+	（1）产生选手 （ABCDEFGHIJKLMNOPQRSTUVWX)姓名，得分，选手编号
+	（2）第一轮   选手抽签  选手比赛  查看比赛结果
+	（3）第二轮   选手抽签  选手比赛  查看比赛结果
+	（4）第三轮   选手抽签  选手比赛  查看比赛结果
+*/
+class Speeker{
+public:
+	string m_name;
+	int score[3];
+};
+void creatSpeeker(vector<int>&v1,map<int,Speeker>&m){
+	string nameseed = "ABCDEFGHIJKLMNOPQRSTUVWX";
+	string name;
+	for (int i = 0; i < nameseed.size(); i++){             //选手姓名，得分初始化
+		name = "选手";
+		name += nameseed[i];
+		Speeker sp;
+		sp.m_name = name;
+		for (int j = 0; j < 3; j++){
+			sp.score[j] = 0;
+		}
+		v1.push_back(i + 100);
+		m.insert(make_pair(i + 100, sp));
+	}
+}
+void speechdraw(vector<int>v1){                                                              //演讲洗牌
+	random_shuffle(v1.begin(), v1.end());
+}
+void speechContest(int index,vector<int>&v1,vector<int>&v2,map<int,Speeker>&m){
+	int num = 0;
+	multimap<int, int, greater<int>>groupMap;                                              //multimap借助内建函数生成了一个从大到小排序的容器。存放的make_pair保存的是分数对应的map_key
+	for (vector<int>::iterator it = v1.begin(); it != v1.end(); it++){
+		deque<int>d;
+		num++;
+		for (int i = 0; i < 10; i++){
+			int score = rand() % 41 + 60;
+			d.push_back(score);
+		}
+		sort(d.begin(), d.end());
+		d.pop_back();
+		d.pop_front();
+		int sum = accumulate(d.begin(), d.end(),0);
+		int avg = sum / d.size();
+		m[*it].score[index - 1] = avg;
+		groupMap.insert(make_pair(avg, *it));                   //临时容器multimap,每六个人保存一次六人成绩
+		if (num % 6 == 0){
+//			cout << "小组比赛成绩如下：" << endl;               //小组比赛成绩查看
+			//for (multimap<int, int, greater<int>>::iterator mit = groupMap.begin(); mit != groupMap.end(); mit++){
+			//	cout << "编号:" << mit->second << "   姓名：" << m[mit->second].m_name << " 第"<<index<<"轮得分：" << m[mit->second].score[index-1] << endl;
+			//}
+			int count = 1;
+			for (multimap<int, int, greater<int>>::iterator mit = groupMap.begin(); (mit != groupMap.end()) && count < 4; mit++, count++){
+				v2.push_back(mit->second);
+			}
+			groupMap.clear();
+		}
+	}
+}
+void showscore(int index,vector<int>&v2,map<int,Speeker>&m){
+	for (vector<int>::iterator it = v2.begin(); it != v2.end(); it++){
+		cout << "编号:" << *it << "   姓名：" << m[*it].m_name << " 第" << index << "轮得分：" << m[*it].score[index - 1] << endl;
+	}
+	cout << endl;
+}
+int main(){
+	srand((unsigned int)time(NULL));		//随机数种子
+	vector<int>v1;                          //存放所有参赛选手编号的容器
+	vector<int>v2;							//存放晋级选手编号
+	vector<int>v3;
+	vector<int>v4;
+	map<int, Speeker>m;						//存放v中选手编号对应的姓名，成绩
+	creatSpeeker(v1, m);					//创建选手
+	speechdraw(v1);							//选手随机分组
+	speechContest(1, v1, v2, m);			//选手成绩
+	showscore(1,v2,m);						//打印选手信息
+
+	speechdraw(v2);
+	speechContest(2, v2, v3, m);
+	showscore(2, v3, m);
+
+	speechdraw(v3);
+	speechContest(3, v3, v4, m);
+	showscore(3, v4, m);
+
+	//for (map<int, Speeker>::iterator it = m.begin(); it != m.end(); it++){						//测试
+	//	cout << "编号:" << it->first << "   姓名：" << it->second.m_name <<"   第一轮得分："<<it->second.score[0]<< endl;
+	//}
+	return 0;
+}
