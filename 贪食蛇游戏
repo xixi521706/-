@@ -1,0 +1,228 @@
+//game.cpp     //静态
+#include "Wall.h"
+#include "Snake.h"
+#include "Food.h"
+#include "Move.h"
+#include <ctime>
+
+int main(){
+	srand((unsigned int)time(NULL));
+	Wall wall;                //墙壁生成，private属性的arraywall,二维数组
+	wall.WallInit();          //初始化墙壁
+	Snake sna(wall);          //蛇对象生成，属性链表，point结构体保存蛇身体和蛇头。提供的接口addpoint(可初始化蛇初始位置)，destroy链表，deletelastpoint，
+	sna.SnakeInit();          //addpoint(可初始化蛇初始位置)
+	Food food(wall);          //生成事物，对象
+
+
+	return 0;
+}
+
+//Wall.h
+#ifndef _WALL_HEAD
+#define _WALL_HEAD
+
+#include <iostream>
+using namespace std;
+
+class Wall{
+public:
+	enum en{
+		Row=26,
+		Col=26
+	};
+	void WallInit();
+	void showWall();
+	void setWall(int x,int y,char ch);
+	char getWall(int x, int y);
+private:
+	char ArrayWall[Row][Col];
+};
+#endif
+
+#include "Wall.h"
+
+void Wall::WallInit(){
+	for (int i = 0; i < Row; i++){
+		for (int j = 0; j < Col; j++){
+			if (i == 0 || i == Row - 1 || j == 0 || j == Col - 1){
+				ArrayWall[i][j] = '*';
+			}
+			else
+				ArrayWall[i][j] = ' ';
+		}
+	}
+}
+void Wall::showWall(){
+	for (int i = 0; i < Row; i++){
+		for (int j = 0; j < Col; j++){
+			cout << ArrayWall[i][j]<<" ";
+		}
+		if (i == 5){
+			cout << "creat by duzhanzhan";
+		}
+		if (i == 6){
+			cout << "a   left";
+		}
+		if (i == 7){
+			cout << "d   right";
+		}
+		if (i == 8){
+			cout << "w    up";
+		}
+		if (i == 9){
+			cout << "s   down";
+		}
+		cout << endl;
+	}
+}
+void Wall::setWall(int x,int y,char ch){
+	ArrayWall[x][y] = ch;
+}
+char Wall::getWall(int x, int y){
+	return ArrayWall[x][y];
+}
+//Snake.h
+#pragma once
+#include "Wall.h"
+#include "Food.h"
+using namespace std;
+
+class Snake{
+	struct point{
+		int x;
+		int y;
+		point* next;
+	};
+public:
+	point* ph;
+private:
+	Wall & wall;
+public:
+	Snake(Wall &);
+	void SnakeInit();
+	void addpoint(int x, int y);
+	void destroy();
+	void destroylast();
+};
+
+#include "Snake.h"
+
+Snake::Snake(Wall & tmpwall) :wall(tmpwall){
+	ph = NULL;
+}
+void Snake::SnakeInit(){
+	destroy();
+	addpoint(4, 4);
+	addpoint(4, 5);
+	addpoint(4, 6);
+}
+void Snake::destroy(){
+	if (ph == NULL)
+		return;
+	while (ph != NULL){
+		point* pcur = ph->next;
+		delete ph;
+		ph = pcur;
+	}
+}
+void Snake::addpoint(int x, int y){
+	point* newpoint = new point;
+	newpoint->x = x;
+	newpoint->y = y;
+	newpoint->next = NULL;
+	if (ph != NULL)
+		wall.setWall(ph->x, ph->y, '=');
+	newpoint->next = ph;
+	ph = newpoint;
+	wall.setWall(ph->x, ph->y, '@');
+}
+void Snake::destroylast(){
+	if (ph == NULL)
+		return;
+	point* pcur = ph;
+	while (pcur != NULL && pcur->next != NULL){
+		pcur = pcur->next;
+	}
+	wall.setWall(pcur->next->x, pcur->next->y, ' ');
+	pcur == NULL;
+	delete pcur->next;
+}
+
+//Food.h
+#pragma once
+#include "Wall.h"
+
+using namespace std;
+
+class Food{
+public:
+	Food(Wall & tmpwall);
+	void setFood(Wall & wall);
+private:
+	int Foodx;
+	int Foody;
+	Wall & wall;
+};
+#include "Food.h"
+
+Food::Food(Wall & tmpwall):wall(tmpwall){
+
+}
+void Food:: setFood(Wall & wall){
+	while (true){
+		Foodx = rand() % (wall.Row - 2) + 1;
+		Foody = rand() % (wall.Col - 2) + 1;
+		if (wall.getWall(Foodx, Foody) == ' '){
+			wall.setWall(Foodx, Foody, '#');
+			break;
+		}
+	}
+}
+
+//Move.h
+#pragma once
+#include "Wall.h"
+#include "Snake.h"
+#include "Food.h"
+
+class Move{
+public:
+	Move(Wall & tmpmove, Snake & tmpsna, Food & tmpfood);
+	void move(int x, int y);
+	void movedirection(char);
+private:
+	//int movex;
+	//int movey;
+	Wall & wall;
+	Snake & sna;
+	Food & food;
+};
+#include "Move.h"
+
+Move::Move(Wall & tmpwall,Snake & tmpsna,Food & tmpfood):wall(tmpwall),sna(tmpsna),food(tmpfood){
+}
+void Move::move(int x, int y){
+	while (1){
+		if (x != sna.ph->next->x && y != sna.ph->next->y){
+			if (wall.getWall(x, y) == '*' || wall.getWall == '=')
+				cout << "死亡，重新游戏?" << endl;
+			if (wall.getWall == '#'){
+				sna.addpoint(x, y);
+				food.setFood(wall);
+			}
+			if (wall.getWall == ' '){
+				sna.addpoint(x, y);
+				sna.destroylast();
+			}
+			break;
+		}
+	}
+}
+void Move:: movedirection(char ch){
+	if (ch != EOF){
+		if (ch == 'a'){
+
+		}
+	}
+		
+}
