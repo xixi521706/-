@@ -1,0 +1,18 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+vector<int> solution(vector<int> & vec,int target){
+    for(int i=0;i<vec.size;i++){
+        for(int j=i+1;j<vec.size;j++){
+            if(vec[i] == target-vec[j])
+                return vector<int>{i,j};
+        }
+    }
+}
+int main(){
+    vector<int> vec={2,5,8,12,17,23};
+    int target=9;
+    vector<int> ve=solution(vec,target);
+    return 0;
+}
