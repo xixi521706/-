@@ -1,0 +1,51 @@
+#include <iostream>
+using namespace std;
+
+class Node{
+public:
+	Node(int v = 0){
+		val = v;
+		ph->next = NULL;
+	}
+	~Node(){
+		if (ph->next == NULL)
+			delete ph;
+		Node* pcur = ph;
+		while (pcur->next != NULL){
+			delete ph;
+			pcur = pcur->next;
+			ph = pcur;
+		}
+	}
+	void insert(int v){
+		if (ph == NULL)
+			ph = new Node(v);
+		Node* pcur = new Node(v);
+		pcur->next = ph->next;
+		ph->next = pcur;
+	}
+	int val;
+	Node* next;
+	static Node* ph;
+};
+Node* Node::ph = new Node;
+Node oddmidnode(Node* & phead){
+	if (phead == NULL || phead->next == NULL || phead->next->next == NULL)
+		return *phead;
+	Node* slow = phead->next;
+	Node* fast = phead->next->next;
+	while (fast->next != NULL && fast->next->next != NULL){
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+	return *slow;
+}
+int main(){
+	Node* phead;
+	for (int i = 1; i<6; i++){
+		phead->insert(i);
+	}
+	Node mid = oddmidnode(phead);
+	cout << mid.val << endl;
+	return 0;
+}
