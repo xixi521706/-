@@ -1,0 +1,95 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+struct Node{
+	Node(int v = 0){
+		val = v;
+	}
+	int val;
+	struct Node* next;
+};
+class List{
+public:
+	List(){
+		ph = new Node;
+		ph->next = NULL;
+	}
+	~List(){
+		Node* pcur = ph;
+		while (pcur != NULL){
+			pcur = pcur->next;
+			delete ph;
+			ph = pcur;
+		}
+	}
+	void insert(int v){
+		Node* pcur = new Node(v);
+		pcur->next = ph->next;
+		ph->next = pcur;
+	}
+
+	Node* ph;
+};
+Node midnode(List &head){
+	if (head.ph == NULL || head.ph->next == NULL || head.ph->next->next == NULL)
+		return *(head.ph);
+	Node* slow = head.ph->next;
+	Node* fast = head.ph->next->next;
+	while (fast->next != NULL && fast->next->next != NULL){
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+	return *slow;
+}
+Node midordownnode(List & head){
+	if (head.ph == NULL || head.ph->next == NULL)
+		return *(head.ph);
+	Node* slow = head.ph->next;
+	Node* fast = head.ph->next;
+	while (fast->next != NULL && fast->next->next != NULL){
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+	return *slow;
+}
+bool ispalindrome(List& head){                          //判断链表是否为镜像
+	if (head.ph == NULL && head.ph->next == NULL)       //如果head链表，为空或者知有一个节点，返回true
+		return true;
+	Node* pcur = head.ph->next;                                  
+	stack<Node> sta;                                    //创建一个stack，保存node
+	while (pcur != NULL){
+		(sta).push(*pcur);
+		pcur = pcur->next;
+	}
+	pcur = head.ph->next;
+	while (!sta.empty()){                             // 同时遍历list和stack，如果值不同则返回false
+		Node cur = sta.top();
+		sta.pop();
+		if (pcur->val != cur.val)
+			return false;
+		pcur = pcur->next;;
+//		cout << 1 << " ";
+	}
+	return true;
+}
+int main(){
+	List head;
+	for (int i = 1; i < 4 ; i++){
+		head.insert(i);
+	}
+	for (int i = 3; i > 0; i--){
+		head.insert(i);
+	}
+//	Node mid = midnode(head);
+	//Node mid1 = midordownnode(head);
+	//cout << mid1.val << endl;
+	//Node* pcur = head.ph;
+	//while (pcur){
+	//	cout << pcur->val << endl;
+	//	pcur = pcur->next;
+	//}
+	bool a = ispalindrome(head);
+	cout << a << endl;
+	return 0;
+}
