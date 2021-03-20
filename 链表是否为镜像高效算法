@@ -1,0 +1,72 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+struct Nodes{
+    Nodes(int v=0):val(v){}
+    int val;
+    Nodes* next;
+};
+class Node{
+public:
+    Node(){
+        ph=new Nodes; 
+        ph->next=NULL;
+    }
+    ~Node(){
+        Nodes* pcur=ph;
+        while(pcur != NULL){
+            delete ph;
+            pcur=pcur->next;
+            ph=pcur;
+        }
+    }
+    void insert(int v){
+        Nodes* pcur=new Nodes(v);
+        pcur->next=ph->next;
+        ph->next=pcur;        
+    }
+private:
+    Nodes ph;
+};
+Nodes& midorpre(Node & head){                  //查找链表中点，返回中点或者中点前一个节点
+    if(head->ph == NULL || head->ph->next == NULL || head->ph->next->next == NULL)    //三个节点才有中点
+        return  NULL;
+    Nodes* slow=ph->next;
+    Nodes* fast=ph->next->next;
+    while(fast->next != NULL && fast->next->next != NULL){
+        slow=slow->next;
+        fast=fast->next->next;
+    }
+    return *slow;
+}
+bool is_mirror(Node &head,Nodes& mid){
+    stack<Nodes*>sta=new stack<Nodes*>();
+    Nodes* pcur=mid->next;
+    while(pcur != NULL){
+        sta.push(pcur);
+    }
+    while(!sta.empty()){
+        Nodes* pcur=sta.top();
+        Nodes* cur=head.ph->next;
+        sta.pop();
+        if(pcur->val != cur->val)
+            return false;
+    }
+    return true;
+}
+int main(){
+    Node head;
+    for(int i=;i<4;i++){
+        head.insert(i);
+    }
+    for(int i=2;i>0;i--){
+        head.insert(i);
+    }
+    Nodes& mid = midorpre(head);
+    if(mid){
+       bool a=is_mirror(head,mid);
+       cout<<a<<endl;
+    }
+    return 0;
+}
