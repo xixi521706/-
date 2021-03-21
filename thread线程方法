@@ -1,0 +1,32 @@
+#include <iostream>
+#include <memory>
+#include <thread>
+using namespace std;
+
+void print(int &num){
+    cout<<num<<endl;
+}
+void print1(unique_ptr<int> ptr){
+    cout<<"子线程启动"<<ptr.get()<<endl;
+    cout<<this_thread::get_id()<<endl;               //this_thread命名空间,静态成员方法get_id（）获得线程编号
+}
+class MM{
+public:
+    void print(int num){
+        num=1001;
+        cout<<"子线程："<<this_thread::get_id<<endl;
+    }
+};
+int main(){                                          //主线程
+    int num=1000;
+    unique_ptr<int> ptr(new int(100));               //智能指针一种，unique_ptr指向的唯一空间，知有在move后空间才会被释放
+    thread test01(print,std::ref(num));              //thread线程方法4，std：：ref，相当于STL里面的适配器用法，增加了仿函数的参数.用于包装引用传递值,包装成一个对象传参
+    thread test02(print1,move(ptr));                 //thread方法5，智能指针
+    MM mm;
+    thread test03(&MM::print,mm,ref(num));
+    test01.join();
+    test02.join();
+    test03.join();
+    cout<<"主线程运行"<<endl;
+    return 0;
+}
