@@ -1,0 +1,23 @@
+#include <iostream>
+#include <thread>
+using namespace std;
+
+void print(){
+    cout<<"子线程启动"<<endl;
+}
+class thr{                        //类对象重载了（）
+public:
+    void operator()(){
+        cout<<"子线程启动"<<endl;
+    }
+}；
+int main(){                                      //有且只有一个主线程
+    thread test01(print);                        //1.线程通过普通函数生成
+    thread test02((thr()));                      //2.类对象作为仿函数，此时(thr()),外边必须带()，不然编译不通过
+    int(*pMax)(int,int)=NULL;
+    pMax=[](int a,int b){return (a>b)?a:b;};     //3.lambda表达式，返回函数指针
+    cout<<pMax(1,2)<<endl;
+    test.join();                                 //线程必须要加入子线程，否则abort错误
+    cout<<"主线程运行"<<endl;                    //回归主线程
+    return 0;
+}
