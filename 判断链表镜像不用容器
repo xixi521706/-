@@ -1,0 +1,128 @@
+#include <iostream>
+using namespace std;
+
+struct Node{
+	Node(int v = 0){
+		val = v;
+	}
+	int val;
+	Node* next;
+};
+class List{
+public:
+	List(int v){
+		ph = new Node(v);
+		ph->next = NULL;
+	}
+	~List(){
+		Node* pCur = ph;
+		while (pCur != NULL)
+		{
+			pCur = pCur->next;
+			delete ph;
+			ph = pCur;
+		}
+	}
+	void insert(int v){
+		if (ph == NULL){
+			ph = new Node(v);
+			ph->next = NULL;
+		}
+		else{
+			Node* pNext = new Node(v);
+			pNext->next = ph->next;
+			ph->next = pNext;
+		}
+	}
+	 void reverseList(){
+		if (ph == NULL || ph->next == NULL){   //一个节点返回
+			return;
+		}
+		Node* pPre = NULL;
+		Node* pNext = NULL;
+		while (ph != NULL){
+			pNext = ph->next;//记录下一个节点的位置
+			ph->next = pPre;//指向反转
+			pPre = ph;    //向右走，前一个节点后移
+			ph = pNext;   //当前节点后移
+		}
+		ph = pPre;
+	}
+	 friend void print(List & head);
+//private:
+	Node* ph;
+};
+List& creatList(List &head){
+	for (int i = 0; i < 4; i++){
+		head.insert(i);
+	}
+	for (int i = 3; i > 0; i--){
+		head.insert(i);
+	}
+	return head;
+}     
+void print(List & head){   
+	Node* pcur = head.ph;
+	while (pcur != NULL){
+		cout << pcur->val << endl;
+		pcur = pcur->next;
+	}
+}
+Node* midnode(List& head){   
+	if (head.ph == NULL || head.ph->next == NULL || head.ph->next->next == NULL)
+		return NULL;
+	Node* slow = head.ph->next;
+	Node* fast = head.ph->next->next;
+	while (fast->next != NULL && fast->next->next != NULL){
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+	return slow;
+}
+bool ismirrorlist(List& head,Node*& pMid){  
+	bool res = true;
+
+	Node* pmidnext = pMid->next;                 //反转中点后面的节点，原list中节点next->null；
+	pMid->next = NULL;
+	Node* pMidreversepre = NULL;
+	Node* pMidreversenext = NULL;
+	while (pmidnext != NULL){
+		pMidreversenext = pmidnext->next;
+		pmidnext->next = pMidreversepre;
+		pMidreversepre = pmidnext;
+		pmidnext = pMidreversenext;
+	}
+
+	Node* preverselist = pMidreversepre;       //反转过的后半部分与前半部分对比
+	Node* pCur = head.ph;
+	while (pCur != NULL && pMidreversepre != NULL){	//节点值不一样，false
+		if (pCur->val != pMidreversepre->val)
+			res = false;
+		pCur = pCur->next;
+		pMidreversepre = pMidreversepre->next;
+	}
+
+
+	pMidreversepre = NULL;             //反转list后半部分，list的中点指回原来的next节点
+	pMidreversenext = NULL;
+	while (preverselist != NULL){
+		pMidreversenext = preverselist->next;
+		preverselist->next = pMidreversepre;
+		pMidreversepre = preverselist;
+		preverselist = pMidreversenext;
+	}
+	pMid->next = pMidreversepre;
+
+	return res;							//返回bool值
+}
+
+int main(){
+	List head(0);		  //创建List对象，初始化头节点0
+	creatList(head);	  //全局函数，创建list对象0，1，2，3，3，2，1，0
+	print(head);          //打印list对象节点值
+//	head.reverseList();   //反转链表list
+	Node* pMid = midnode(head);//查找list中间节点
+	bool a = ismirrorlist(head,pMid);//判断list是否为镜像
+	cout << a << endl;
+	return 0;
+}
