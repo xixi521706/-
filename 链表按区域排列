@@ -1,0 +1,96 @@
+#include <iostream>
+using namespace std;
+struct Node{
+    Node(int v=0){val=v;}
+    int val;
+    Node* next;
+};
+class ListNode{
+public:
+    ListNode(){ph=NULL;}
+    ~ListNode(){
+        if(ph->next != NULL){
+            Node* pCur=ph->next;
+            while(pCur != NULL){
+                pCur=pCur->next;
+                delete ph;
+                ph=pCur;
+            }
+    }
+    void insert(v){
+        if(ph == NULL){
+            ph=new Node(v);
+            ph->next=NULL;
+        }
+        else{
+            Node* Next=new Node(v);
+            Next->next=ph->next;
+            ph->next=Next;
+        }
+    }
+    Node* ph;
+};
+void sortList(ListNode &head,int pivot){
+    Node* Sh=NULL;                   //六个指针记录分别记录了小于区域，等于，大于区域的头尾指针
+    Node* St=NULL;
+    Node* Eh=NULL;
+    Node* Et=NULL;
+    Node* Mh=NULL;
+    Node* Mt=NULL;
+    Node* pCur=head.ph;              //头节点的位置
+    Node* pNext=NULL;                //当前遍历节点后面的节点
+    while(pCur != NULL){             //遍历节点不为空
+        pNext=pCur->next;            //记录下，下次遍历节点的位置。因为当前节点分类后，next指针要断开，指向空
+        pCur->next=NULL;             //当前节点指向空
+        if(pCur->val < pivot){       //判断当前节点位置
+            if(Sh == NULL){
+                St=pCur;
+                Sh=pCur;
+            }
+            else{
+                St->next=pCur;       //当前所在区域尾节点指向当前节点
+                St=pCur;             //更新尾节点
+            }
+        }
+        if(pCur->val == pivot){
+            if(Eh == NULL){
+                Et=pCur;
+                Eh=pCur;
+            }
+            else{
+                Et->next=pCur;
+                Et=pCur;
+            }       
+        }
+        if(pCur->val > pivot){
+            if(Mh == NULL){
+                Mt=pCur;
+                Mh=pCur;
+            }
+            else{
+                Mt->next=pCur;
+                Mt=pCur;
+            }       
+        }
+        pCur=pNext;                  //更新下一次遍历节点
+     } 
+     if(St != NULL){                 //如果有小于区域，尾节点指向等于区域头节点，谁去指向大于区域头节点？
+        St->next=Eh;
+        Et= Et==NULL?St:Et;          //等于区域尾节点
+     }
+     if(Et != NULL){
+        Et->next=Mh;
+     }  
+     ph= Sh != NULL?Sh:(Eh != NULL?Eh:Mh); //ph指向新链表头节点
+}
+int main(){ 
+    ListNode head;
+    int pivot=4;
+    for(int i=1;i<5;i++){
+        head.intsert(i);
+        head.intsert(i+2);
+    }
+    sortList(head,pivot);
+    
+    return 0;
+}
