@@ -1,0 +1,57 @@
+#include <iostream>
+#include <hash_map>
+using namespace std;
+
+class Node{
+public:
+	Node(int v=0){
+		val = v;
+	}
+
+	int val;
+	Node* next;
+	Node* rand;
+
+};
+Node*& copylistwithrand(Node &head){
+	hash_map<Node*, Node*> *Map = new hash_map<Node*, Node*>; //哈希表存储队组时原节点，和对应新节点
+	Node* pCur = head.next;									  
+	while (pCur != NULL){									  
+		Map->insert(pCur, new Node(pCur->val));				  
+		pCur = pCur->next;									  
+	}														  
+	pCur = head.next;										  
+	while (pCur != NULL){                                     //遍历哈希表，通过k值找到新节点指向新节点后面的节点，新节点指向random节点
+		Map->at[pCur]->next = Map->at[pCur->next];			  
+		Map->at[pCur]->rand = Map->at[pCur->rand];			  
+		pCur = pCur->next;									  
+	}														  
+	return Map->at[head];                                     //返回新节点头节点
+}															  
+Node*& copylistwithrand1(Node &head){						  
+	Node* pCur = head.next;									  
+	while (pCur != NULL){                                     //遍历原链表节点，在当前节点后面新建复制节点，复制节点指向原节点后一个节点，链表长度增加了一倍
+		Node* pNext = new Node(pCur->val);					  
+		pNext = pCur->next;									  
+		pCur->next = pNext;									  
+	}														  
+	pCur = head.next;										  
+	while (pCur != NULL){                                     //遍历新链表，原节点和复制节点为一对，新节点指向的rand节点为原节点指向的rand节点下一个节点
+		pCur->next->rand = pCur->rand->next;				  
+		pCur = pCur->next->next;
+	}
+	pCur = head.next->next;                                   //遍历节点，新头节点
+	delete head.next;                                         //删除原头节点
+	Node* newhead = pCur;                                     //记录下新头节点，作为返回值
+	while (pCur != NULL){                                     //删除原节点，新节点指向后面的新节点
+		pCur->next = pCur->next->next;
+		delete pCur->next;
+	}
+	return newhead;
+}
+int main(){
+	Node head;
+	Node* newhead = copylistwithrand(head);                   //方法1
+	Node* newhead1 = copylistwithrand1(head);                 //方法2
+	return 0;
+}
