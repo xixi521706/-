@@ -1,0 +1,23 @@
+class Solution {
+public:
+	Node* findloopnode(Node head) {
+		if (head == NULL || head.next == NULL || head.next->next == NULL)         //节点数目两个及以上
+			return NULL;
+		Node *slow = head->next;                                                  //初始快慢指针
+		Node *fast = head->next->next;
+		while (slow != fast){                                                     //找到快慢指针相遇节点，没有返回NULL
+			if (fast == NULL)
+				return NULL;
+			else{
+				slow = slow->next;
+				fast = fast->next->next;
+			}
+		}
+		fast = head;                                                              //快指针指回头节点，快慢指针同时一步一步移动，相遇节点即为环节点入口
+		while (fast != slow){
+			slow = slow->next;
+			fast = fast->next;
+		}
+		return fast;
+	}
+};
