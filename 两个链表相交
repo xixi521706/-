@@ -1,0 +1,80 @@
+class Node{
+public:
+    Node(int v = 0){
+        val = v;
+        next=NULL;
+    }
+    int val;
+    node* next;
+};
+class soultion{
+public:
+    Node findloopNode(head){
+        if(head == nullptr || head.next == nullptr || head.next.next == nullptr)
+            return nullptr;
+        Node slow=head.next;
+        Node fast=head.next.next;
+        while(slow != fast){
+            if(fast.next == nullptr || fast.next.next == nullptr)
+                return nullptr;
+            slow=slow.next;
+            fast=fast.next;
+        }
+        fast=head;
+        while(fast != slow){
+            fast=fast.next;
+            slow=slow.next;
+        }
+        return fast;
+    }
+};
+class public soltion{
+pbulic:
+    Node findTwoloop(Node head1,Node head2){
+        Node loop1=soultion::findloopNode(head1);
+        Node loop2=soultion::findloopNode(head2);
+        if(loop1 == NULL && loop2 == NULL){                  //两个单链表均没有环节点，情况1
+            int n=0;                                        //记录节点值
+            Node Cur1=head1;
+            Node Cur2=head2;
+            while(Cur1 !=  null){
+                n++;
+                Cur1=Cur1.next;
+            }
+            while(Cur2 != null){
+                n--;
+                Cur2=Cur2.next;
+            }
+            if(Cur1 != Cur2)                                //如果两条链表的尾节点不同，则说明没有相交，返回NULL
+                return nullptr;
+            Cur1= n>0?head1:head2;                          //n的正负决定了head1和head2谁长,Cur1指向长链表的头节点
+            Cur2=Cur2 == head1?head2:head1;
+            n=math.abs(n);                                  //n记录了俩个链表长度差值
+            while(n != 0){                                  //长链表先移动n个节点，此时两个链表剩下的节点数一样，因为他们必定有相交节点，此刻会相交
+                n--;
+                Cur1 = Cur1.next;
+            }
+            while(Cur1 != Cur2){                            //两个长度相同的链表同时移动，会相交
+                Cur1=Cur1.next;
+                Cur2=Cur2.next;
+            }
+           return Cur1;  
+       }
+       else if(loop1 == NULL || loop2 == NULL){             //情况2，如果有一个无环，一个有环则不可能相交，因为相交后必须有环
+           return NULL;
+       }
+       else{                                                //情况3，都有环节点
+           if(loop1 == loop2){                              //如果两个链表共享环，则可能出现的公共节点在环之前或者环节点处
+              。。。                                        //看成环节点之前没有环，最开始的代码
+           }   
+           else{
+              Node Cur=loop1.next;
+              while(Cur != loop1){
+                  if(Cur == loop2)
+                     return loop2;
+                  Cur=Cur.next;
+              }
+           }
+       }
+    }
+};
